@@ -93,10 +93,8 @@ jobs:
           find . -name 'p2.index' -exec sed -i 's/artifacts\.xml\.xz,//g' {} +
           # 7. Remove 'content.xml.xz,' from any p2.index file
           #find . -name 'p2.index' -exec sed -i 's/artifacts\.xml\.xz,//g' {} +
-          # 8. Cleanup any referenced P2 update site from content.xml files:
-          find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<references size=/d' {} +
-          find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<repository uri=/d' {} +
-          find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<\/references>/d' {} +
+          # 8. Remove referenced P2 update sites from content.xml files:
+          find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<references size=/,/<\/references>/d' {} +
 
       - name: Generate composite files
         run: |

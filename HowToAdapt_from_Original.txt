@@ -24,8 +24,6 @@ Steps done by GitHub workflow for adoption before deploying to pages:
    $ find . -name 'p2.index' -exec sed -i 's/artifacts\.xml\.xz,//g' {} +
    
 8. Cleanup any referenced P2 update site from content.xml files:
-   $ find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<references size=/d' {} +
-   $ find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<repository uri=/d' {} +
-   $ find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<\/references>/d' {} +
+   $ find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<references size=/,/<\/references>/d' {} +
 
 - EOF -
