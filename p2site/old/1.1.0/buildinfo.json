@@ -1,0 +1,35 @@
+{
+    "timestamp" : 1541890200052,
+    "revision" : {
+        "HEAD" : "2d34e012c93785c7eb1db429efc99f99287f0c94",
+        "currentBranch" : "HEAD",
+        "knownReferences" : null
+    },
+    "properties" : {
+        "TARGET_PLATFORM_VERSION_MAXIMUM" : "null",
+        "java.version" : "1.8.0_151",
+        "user.dir" : "/home/travis/build/m2e-code-quality/m2e-code-quality",
+        "os.arch" : "amd64",
+        "RELEASE" : "null",
+        "BUILD_ALIAS" : "null",
+        "JOB_NAME" : "null",
+        "os.version" : "4.14.12-041412-generic",
+        "BUILD_NUMBER" : "null",
+        "TARGET_PLATFORM_VERSION" : "null",
+        "NODE_NAME" : "null",
+        "HOSTNAME" : "travis-job-m2e-code-quali-m2e-code-quali-453406465.travisci.net",
+        "java.vendor" : "Oracle Corporation",
+        "os.name" : "Linux",
+        "ZIPSUFFIX" : "null",
+        "WORKSPACE" : "/home/travis/build/m2e-code-quality/m2e-code-quality"
+    },
+    "upstream" : {
+        "http://download.eclipse.org/technology/m2e/releases" : "Build info file not accessible: http://download.eclipse.org/technology/m2e/releases/buildinfo.json",
+        "http://download.eclipse.org/releases/photon" : "Build info file not accessible: http://download.eclipse.org/releases/photon/buildinfo.json",
+        "http://eclipse-cs.sf.net/update" : "Build info file not accessible: Invalid character: <",
+        "https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/" : "Build info file not accessible: https://dl.bintray.com/pmd/pmd-eclipse-plugin/updates/buildinfo.json",
+        "http://findbugs.cs.umd.edu/eclipse/" : "Build info file not accessible: http://findbugs.cs.umd.edu/eclipse/buildinfo.json",
+        "https://spotbugs.github.io/eclipse/" : "Build info file not accessible: https://spotbugs.github.io/eclipse/buildinfo.json",
+        "http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository/" : "Build info file not accessible: http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository/buildinfo.json"
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "timestamp" : 1631956264276,
+    "revision" : {
+        "HEAD" : "5c54cc8f1fd263c667bad5f01c9959b858d7d97e",
+        "currentBranch" : "refs/heads/develop",
+        "knownReferences" : null
+    },
+    "properties" : {
+        "TARGET_PLATFORM_VERSION_MAXIMUM" : "null",
+        "java.version" : "11.0.12",
+        "user.dir" : "/home/runner/work/m2e-code-quality/m2e-code-quality",
+        "os.arch" : "amd64",
+        "RELEASE" : "null",
+        "BUILD_ALIAS" : "null",
+        "JOB_NAME" : "null",
+        "os.version" : "5.8.0-1041-azure",
+        "BUILD_NUMBER" : "null",
+        "TARGET_PLATFORM_VERSION" : "null",
+        "NODE_NAME" : "null",
+        "HOSTNAME" : "fv-az74-417",
+        "java.vendor" : "Eclipse Foundation",
+        "os.name" : "Linux",
+        "ZIPSUFFIX" : "null",
+        "WORKSPACE" : "/home/runner/work/m2e-code-quality/m2e-code-quality"
+    },
+    "upstream" : null
+}

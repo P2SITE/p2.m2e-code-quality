@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?><?compositeArtifactRepository version='1.0.0'?>
+<repository name='M2E Code Quality - Eclipse Update Site' type='org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository' version='1.0.0'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1776355729000'/>
+    <property name='p2.compressed' value='true'/>
+  </properties>
+  <children size='5'>
+    <child location='2.0.0'/>
+    <child location='2.1.0'/>
+    <child location='2.2.0'/>
+    <child location='2.3.0'/>
+    <child location='2.3.1'/>
+  </children>
+</repository>
+
