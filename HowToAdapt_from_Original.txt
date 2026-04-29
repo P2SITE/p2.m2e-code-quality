@@ -1,0 +1,30 @@
+Steps done by GitHub workflow for adoption before deploying to pages:
+---------------------------------------------------------------------
+
+1. Remove any composite*.xml
+   $ find . -type f -name 'composite*.xml' -delete
+
+2. Remove any *xml.xz file
+   $ find . -type f -name '*.xml.xz' -delete
+
+3. Unpack any content.jar:
+   $ find . -name 'content.jar' -exec sh -c 'cd "$(dirname "{}")" && unzip -o "$(basename "{}")"' \;
+
+4. Remove any content.jar file
+   $ find . -type f -name 'content.jar' -delete
+
+5. Remove any index.html file
+   $ find . -type f -name 'index.html' -delete
+
+6. Remove 'artifacts.xml.xz,' from any p2.index file
+   $ find . -name 'p2.index' -exec sed -i 's/artifacts\.xml\.xz,//g' {} +
+
+7. Remove 'content.xml.xz,' from any p2.index file
+   $ find . -name 'p2.index' -exec sed -i 's/artifacts\.xml\.xz,//g' {} +
+   
+8. Cleanup any referenced P2 update site from content.xml files:
+   $ find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<references size=/d' {} +
+   $ find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<repository uri=/d' {} +
+   $ find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<\/references>/d' {} +
+
+- EOF -

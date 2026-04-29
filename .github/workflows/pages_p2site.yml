@@ -1,0 +1,151 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the follwing branch(es):
+  push:
+    branches: ["gh_pages"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  deployments: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build_deployment_package:
+    name: Build Deployment Package
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      artifact_name: ${{ steps.set_env.outputs.artifact_name }}
+    steps:
+      - name: Set Environment Vars
+        id: set_env
+        run: |
+          ARTIFACT_NAME='github-pages-deployment'
+          echo "ARTIFACT_NAME=${ARTIFACT_NAME}" >> $GITHUB_ENV
+          echo "artifact_name=${ARTIFACT_NAME}" >> "$GITHUB_OUTPUT"
+          MAVEN_VERSION_ENFORCED='3.9.6'
+          echo "MAVEN_VERSION_ENFORCED=${MAVEN_VERSION_ENFORCED}" >> $GITHUB_ENV
+          echo "maven_version_enforced=${MAVEN_VERSION_ENFORCED}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      # Setup JAVA home with Maven settings for publishing to Maven Central
+      - name: Setup JAVA home with Maven settings.xml
+        id: setup-java-home
+        uses: GHCICD/setup-java@vHEAD-GHCICD-552
+        with:
+          java-version: 21
+          distribution: zulu
+          # We prefer to get an empty local repo for any build
+          #cache: maven
+      - name: Determine default installed Maven version
+        id: default-maven
+        run: |
+          DEFAULT_MAVEN_VERSION="$(mvn -q -v)"
+          echo "maven-version=${DEFAULT_MAVEN_VERSION}" >> $GITHUB_OUTPUT
+          echo "Default installed Maven version: ${DEFAULT_MAVEN_VERSION}"
+      - name: Update Maven version if required
+        uses: mavenplugins/actions-setup-maven@vHEAD
+        if: steps.set_env.outputs.maven_version_enforced != steps.default-maven.outputs.maven-version
+        with:
+          maven-version: '${{ steps.set_env.outputs.maven_version_enforced }}'
+      - name: Show initial Maven setup result
+        run: |
+          echo "PATH:      ${PATH}"
+          echo "JAVA_HOME: ${JAVA_HOME}"
+          mvn --version
+          echo "MAVEN_OPTS: ${MAVEN_OPTS}"
+          echo "##### BEGIN - settings.xml"
+          cat ~/.m2/settings.xml
+          echo "##### END - settings.xml"
+          echo "##### BEGIN - toolchains.xml"
+          cat ~/.m2/toolchains.xml
+          echo "##### END - toolchains.xml"
+      
+      - name: Remove update site references in all content.xml
+        run: |
+          # 1. Remove any composite*.xml
+          find . -type f -name 'composite*.xml' -delete
+          # 2. Remove any *xml.xz file
+          find . -type f -name '*.xml.xz' -delete
+          # 3. Unpack any content.jar:
+          find . -name 'content.jar' -exec sh -c 'cd "$(dirname "{}")" && unzip -o "$(basename "{}")"' \;
+          # 4. Remove any content.jar file
+          find . -type f -name 'content.jar' -delete
+          # 5. Remove any index.html file
+          find . -type f -name 'index.html' -delete
+          # 6. Remove 'artifacts.xml.xz,' from any p2.index file
+          find . -name 'p2.index' -exec sed -i 's/artifacts\.xml\.xz,//g' {} +
+          # 7. Remove 'content.xml.xz,' from any p2.index file
+          #find . -name 'p2.index' -exec sed -i 's/artifacts\.xml\.xz,//g' {} +
+          # 8. Cleanup any referenced P2 update site from content.xml files:
+          find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<references size=/d' {} +
+          find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<repository uri=/d' {} +
+          find . -name 'content.xml' -exec sed -i '/^[[:space:]]*<\/references>/d' {} +
+
+      - name: Generate composite files
+        run: |
+          #mvn -ntp -B -e io.github.mavenplugins:p2site-maven-plugin:1.0.7:build-index-html -Dp2site.baseDir=p2site -Dp2site.compositeXmlsForFoldersWithUpdateSitePropertiesOnly -Dp2site.createCompositeXmls -Dproject.basedir=. -Dp2site.timeStamp=1739403019784
+          mvn -ntp -B -e io.github.mavenplugins:p2site-maven-plugin:1.0.7:build-index-html -Dp2site.baseDir=p2site -Dp2site.compositeXmlsForFoldersWithUpdateSitePropertiesOnly -Dp2site.createCompositeXmls -Dproject.basedir=.
+
+      - name: Generate index.html if not existing
+        run: |
+          INDEX_FILE=p2site/index.html
+          [[ ! -f "${INDEX_FILE}" ]] && echo "This URL provides Eclipse P2 installable artifacts." > "${INDEX_FILE}" || true
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        id: upload
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload repository path p2site only
+          path: 'p2site'
+          # Name of the artifact uploaded
+          name: ${{ env.ARTIFACT_NAME }}
+
+  cleanup_deployment_history:
+    needs: build_deployment_package
+    name: Cleanup Deployment History
+    runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ needs.build_deployment_package.outputs.artifact_name }}
+    steps:
+      - name: Delete Previous Deployments
+        uses: strumwolf/delete-deployment-environment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: github-pages
+          onlyRemoveDeployments: true
+
+  deploy_to_github_pages:
+    name: Deploy Package to GitHub Pages
+    needs: cleanup_deployment_history
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo artifact_name
+        run: |
+          echo "artifact_name=${{ needs.cleanup_deployment_history.outputs.artifact_name }}"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ needs.cleanup_deployment_history.outputs.artifact_name }}
