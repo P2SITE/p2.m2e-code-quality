@@ -41,7 +41,7 @@ jobs:
           echo "maven_version_enforced=${MAVEN_VERSION_ENFORCED}" >> "$GITHUB_OUTPUT"
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: GHCICD/checkout@vHEAD
 
       # Setup JAVA home with Maven settings for publishing to Maven Central
       - name: Setup JAVA home with Maven settings.xml
@@ -109,11 +109,11 @@ jobs:
           [[ ! -f "${INDEX_FILE}" ]] && echo "This URL provides Eclipse P2 installable artifacts." > "${INDEX_FILE}" || true
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: GHCICD/configure-pages@vHEAD
 
       - name: Upload artifact
         id: upload
-        uses: actions/upload-pages-artifact@v3
+        uses: GHCICD/upload-pages-artifact@vHEAD
         with:
           # Upload repository path p2site only
           path: 'p2site'
@@ -128,7 +128,7 @@ jobs:
       artifact_name: ${{ needs.build_deployment_package.outputs.artifact_name }}
     steps:
       - name: Delete Previous Deployments
-        uses: strumwolf/delete-deployment-environment@v3
+        uses: GHCICD/delete-deployment-environment@vHEAD
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment: github-pages
@@ -147,6 +147,6 @@ jobs:
           echo "artifact_name=${{ needs.cleanup_deployment_history.outputs.artifact_name }}"
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: GHCICD/deploy-pages@vHEAD
         with:
           artifact_name: ${{ needs.cleanup_deployment_history.outputs.artifact_name }}
