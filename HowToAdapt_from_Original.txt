@@ -13,7 +13,8 @@ Steps done by GitHub workflow for adoption before deploying to pages:
 4. Remove any content.jar file
    $ find . -type f -name 'content.jar' -delete
 
-5. Remove any index.html file
+5. Remove any index.md and index.html file
+   $ find . -type f -name 'index.md' -delete
    $ find . -type f -name 'index.html' -delete
 
 6. Remove 'artifacts.xml.xz,' from any p2.index file
