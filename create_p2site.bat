@@ -1,0 +1,1 @@
+mvn -ntp -B -e io.github.mavenplugins:p2site-maven-plugin:1.0.7:build-index-html -Dp2site.baseDir=p2site -Dp2site.compositeXmlsForFoldersWithUpdateSitePropertiesOnly -Dp2site.createCompositeXmls -Dproject.basedir=.
